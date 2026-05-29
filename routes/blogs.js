@@ -53,10 +53,10 @@ router.put("/:id", authMiddleware, async (req, res) => {
     const blog = await Blog.findById(req.params.id);
     if (!blog) return res.status(404).json({ message: "Blog not found" });
 
-    // Only author can update
-    if (blog.author.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
+    // author and admin can update
+    if (blog.author.toString() !== req.user.id && req.user.role !== "admin") {
+    return res.status(403).json({ message: "Not authorized" });
+}
 
     const updated = await Blog.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
